@@ -1,0 +1,5 @@
+com/example/mongodb/repository/ProductRepository.class
+com/example/mongodb/model/Product.class
+com/example/mongodb/controller/ProductController.class
+com/example/mongodb/MongoDbApplication.class
+com/example/mongodb/service/ProductService.class
