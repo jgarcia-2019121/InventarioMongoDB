@@ -43,6 +43,10 @@ function App() {
   // Función para eliminar un producto
   const deleteProduct = async (id) => {
     console.log("ID del producto a eliminar:", id);
+    if (!id) {
+      console.error("No se puede eliminar: ID no válido.");
+      return;
+    }
     try {
       await axios.delete(`http://localhost:8080/api/products/${id}`);
       fetchProducts();  // Refresca la lista después de eliminar
@@ -52,7 +56,7 @@ function App() {
   }; 
 
   const updateProduct = async () => {
-    if (editingProduct) {
+    if (editingProduct && editingProduct._id) {
       try {
         await axios.put(`http://localhost:8080/api/products/${editingProduct._id}`, {
           name: editingProduct.name,
