@@ -1,0 +1,8 @@
+com\example\mongodb\controller\ProductController.class
+com\example\mongodb\model\Product.class
+com\example\mongodb\MongoDbApplication.class
+com\example\mongodb\service\ProductService.class
+com\example\mongodb\controller\ReportController.class
+com\example\mongodb\WebConfig.class
+com\example\mongodb\repository\ProductRepository.class
+com\example\mongodb\service\ReportService.class

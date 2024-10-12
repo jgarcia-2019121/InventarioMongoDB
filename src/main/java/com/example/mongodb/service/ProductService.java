@@ -14,28 +14,28 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product saveProduct(Product product) {
-        return productRepository.save(product);
-    }
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public void deleteProduct(String id) {
-        productRepository.deleteById(id);
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
     }
 
-    public Product updateProduct(String id, Product updatedProduct) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isPresent()) {
-            Product existingProduct = optionalProduct.get();
-            existingProduct.setName(updatedProduct.getName());
-            existingProduct.setQuantity(updatedProduct.getQuantity());
-            existingProduct.setPrice(updatedProduct.getPrice());
-            return productRepository.save(existingProduct);
+    public Product updateProduct(String id, Product product) {
+        Optional<Product> existingProduct = productRepository.findById(id);
+        if (existingProduct.isPresent()) {
+            Product prodToUpdate = existingProduct.get();
+            prodToUpdate.setName(product.getName());
+            prodToUpdate.setQuantity(product.getQuantity());
+            prodToUpdate.setPrice(product.getPrice());
+            return productRepository.save(prodToUpdate);
         } else {
-            throw new RuntimeException("Product not found");
+            throw new RuntimeException("Producto no encontrado");
         }
+    }
+
+    public void deleteProduct(String id) {
+        productRepository.deleteById(id);
     }
 }

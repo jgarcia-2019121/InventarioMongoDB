@@ -12,7 +12,7 @@ public class Product {
     private int quantity;
     private double price;
 
-    // Getters y Setters manuales
+    // Getters y Setters
     public String getId() {
         return id;
     }
