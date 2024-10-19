@@ -6,6 +6,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +28,24 @@ public class ReportService {
             PdfWriter.getInstance(document, out);
             document.open();
 
+            // Agregar imagen de la empresa al reporte
+            Image companyLogo = Image.getInstance("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiWhsdIaBE0S9LxCAWqqMIY-dEzhD8c-8dxg&s");
+            companyLogo.scaleToFit(120, 120); // Ajustar tamaño x y
+            companyLogo.setAlignment(Element.ALIGN_CENTER);
+            document.add(companyLogo);
+
+            // Espacio entre la imagen y el título
+            document.add(new Paragraph(" "));
+
             // Agregar título centrado
             Paragraph title = new Paragraph("Product Report", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK));
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
 
-            // Espacio entre título y contenido
+            // Línea separadora debajo del título
+            document.add(new Chunk(new LineSeparator()));
+
+            // Espacio entre título y tabla
             document.add(new Paragraph(" "));
 
             // Crear tabla con 3 columnas: Nombre, Cantidad, Precio
@@ -45,41 +58,72 @@ public class ReportService {
             float[] columnWidths = {2f, 1f, 1f};
             table.setWidths(columnWidths);
 
-            // Encabezado de la tabla (Nombre, Cantidad, Precio)
+            // Estilo del encabezado
             PdfPCell cell;
+            Font headFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
 
-            cell = new PdfPCell(new Phrase("Product Name", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
-            cell.setBackgroundColor(BaseColor.GRAY);
+            // Encabezado de la tabla con colores más vivos
+            BaseColor headerColor = new BaseColor(30, 144, 255); // Color azul vivo
+            BaseColor rowColor = new BaseColor(240, 248, 255);   // Color azul muy claro para las filas
+
+            cell = new PdfPCell(new Phrase("Product Name", headFont));
+            cell.setBackgroundColor(headerColor);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setPadding(10f);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("Quantity", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
-            cell.setBackgroundColor(BaseColor.GRAY);
+            cell = new PdfPCell(new Phrase("Quantity", headFont));
+            cell.setBackgroundColor(headerColor);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setPadding(10f);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("Price", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE)));
-            cell.setBackgroundColor(BaseColor.GRAY);
+            cell = new PdfPCell(new Phrase("Price", headFont));
+            cell.setBackgroundColor(headerColor);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setPadding(10f);
             table.addCell(cell);
 
             // Llenar la tabla con los datos de los productos
             for (Product product : products) {
-                table.addCell(new PdfPCell(new Phrase(product.getName())));
-                table.addCell(new PdfPCell(new Phrase(String.valueOf(product.getQuantity()))));
-                table.addCell(new PdfPCell(new Phrase("$" + product.getPrice())));
+                cell = new PdfPCell(new Phrase(product.getName()));
+                cell.setPadding(10f);
+                cell.setBackgroundColor(rowColor); // Fondo claro en las filas
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(String.valueOf(product.getQuantity())));
+                cell.setPadding(10f);
+                cell.setBackgroundColor(rowColor); // Fondo claro en las filas
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase("$" + String.format("%.2f", product.getPrice())));
+                cell.setPadding(10f);
+                cell.setBackgroundColor(rowColor); // Fondo claro en las filas
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
             }
 
-            // Agregar la tabla al documento
+            // Añadir un borde y sombra a la tabla
+            table.setWidthPercentage(100);
             document.add(table);
 
-            // Pie de página o información adicional
+            // Espacio entre la tabla y el pie de página
+            document.add(new Paragraph(" "));
+
+            // Pie de página con separador y espaciado
+            LineSeparator footerSeparator = new LineSeparator();
+            footerSeparator.setOffset(-5f); // Subir el separador
+            document.add(new Chunk(footerSeparator));
+
             Paragraph footer = new Paragraph("Generated by Jonathan Garcia", FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.GRAY));
             footer.setAlignment(Element.ALIGN_CENTER);
             document.add(footer);
 
+            // Cerrar el documento
             document.close();
-        } catch (DocumentException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
